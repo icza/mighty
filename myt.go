@@ -10,34 +10,50 @@ type Myt struct {
 	*testing.T
 }
 
-// Eq checks if exp and got are equal, and if not, reports it as an error.
-func (m Myt) Eq(exp, got interface{}) {
-	if exp != got {
+// Eq reports an error if exp != got, or an optional non-nil error is provided.
+func (m Myt) Eq(exp, got interface{}, errs ...error) {
+	var err error
+	if len(errs) > 0 && errs[0] != nil {
+		err = errs[0]
+	}
+	if exp != got || err != nil {
 		_, file, line, _ := runtime.Caller(2)
-		m.T.Errorf("[%s:%d] Expected: %v, got: %v", file, line, exp, got)
+		if err == nil {
+			m.T.Errorf("[%s:%d] Expected: %v, got: %v", file, line, exp, got)
+		} else {
+			m.T.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", file, line, exp, got, err)
+		}
 	}
 }
 
-// Neq checks if v1 and v2 are not equal, but if they are, reports it as an error.
-func (m Myt) Neq(v1, v2 interface{}) {
+// Neq reports an error if exp == got, or an optional non-nil error is provided.
+func (m Myt) Neq(v1, v2 interface{}, errs ...error) {
+	var err error
+	if len(errs) > 0 && errs[0] != nil {
+		err = errs[0]
+	}
 	if v1 == v2 {
 		_, file, line, _ := runtime.Caller(2)
-		m.T.Errorf("[%s:%d] Expected mismatch: %v, got: %v", file, line, v1, v2)
+		if err == nil {
+			m.T.Errorf("[%s:%d] Expected mismatch: %v, got: %v", file, line, v1, v2)
+		} else {
+			m.T.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", file, line, v1, v2, err)
+		}
 	}
 }
 
 // Eq returns a method value of Myt{t}.Eq.
-func Eq(t *testing.T) func(interface{}, interface{}) {
+func Eq(t *testing.T) func(interface{}, interface{}, ...error) {
 	return Myt{t}.Eq
 }
 
 // Neq returns a method value of Myt{t}.Neq.
-func Neq(t *testing.T) func(interface{}, interface{}) {
+func Neq(t *testing.T) func(interface{}, interface{}, ...error) {
 	return Myt{t}.Neq
 }
 
 // EqNeq returns 2 method values: Myt{t}.Eq and Myt{t}.Neq.
-func EqNeq(t *testing.T) (func(interface{}, interface{}), func(interface{}, interface{})) {
+func EqNeq(t *testing.T) (func(interface{}, interface{}, ...error), func(interface{}, interface{}, ...error)) {
 	myt := Myt{t}
 	return myt.Eq, myt.Neq
 }

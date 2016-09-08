@@ -3,7 +3,7 @@
 Lightweight extension to Go's [testing](https://golang.org/pkg/testing/) package.
 
 With this utility, you can make your Go test files super clean but still intuitive.
-This package doesn't want to hide complex things for you, but wants to eliminate repetitive,
+This package doesn't want to hide complex things from you, but wants to eliminate repetitive,
 long code from your tests.
 
 Example: Let's write testing code for a `Sign(int) int` function,
