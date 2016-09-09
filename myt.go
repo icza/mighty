@@ -47,6 +47,14 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 			} else {
 				m.T.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", file, line, exp, got, err)
 			}
+			// Common mistake is to provide constants as exp whose default value will be applied
+			// when packed into interface{} which might not be the case in case of direct comparision.
+			// Provide warning for such likely cause.
+			if exp != got && exp != nil && got != nil {
+				if texp, tgot := reflect.TypeOf(exp), reflect.TypeOf(got); texp != tgot {
+					m.T.Errorf("\tType of expected and got does not match! exp type: %v, got type: %v", texp, tgot)
+				}
+			}
 		}
 	}
 }
