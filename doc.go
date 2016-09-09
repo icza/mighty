@@ -56,7 +56,8 @@ Without mighty it could look like this:
 	}
 	p := make([]byte, 4)
 	if n, err := r.Read(p); n != 4 || string(p) != "data" || err != nil {
-		t.Errorf("Expected: n=%v, p=%v; got: n=%v, p=%v; error: %v", 4, "data", n, string(p), err)
+		t.Errorf("Expected: n=%v, p=%v; got: n=%v, p=%v; error: %v",
+			4, "data", n, string(p), err)
 	}
 
 Using mighty:

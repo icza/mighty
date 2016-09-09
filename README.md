@@ -1,5 +1,7 @@
 # mighty
 
+[![GoDoc](https://godoc.org/github.com/icza/mighty?status.svg)](https://godoc.org/github.com/icza/mighty) [![Go Report Card](https://goreportcard.com/badge/github.com/icza/mighty)](https://goreportcard.com/report/github.com/icza/mighty)
+
 Package `mighty` is a lightweight extension to Go's [testing](https://golang.org/pkg/testing/) package.
 
 With this utility, you can make your Go test files super clean but still intuitive.
@@ -56,7 +58,8 @@ Without `mighty` it could look like this:
 	}
 	p := make([]byte, 4)
 	if n, err := r.Read(p); n != 4 || string(p) != "data" || err != nil {
-		t.Errorf("Expected: n=%v, p=%v; got: n=%v, p=%v; error: %v", 4, "data", n, string(p), err)
+		t.Errorf("Expected: n=%v, p=%v; got: n=%v, p=%v; error: %v",
+			4, "data", n, string(p), err)
 	}
 
 Using `mighty`:
