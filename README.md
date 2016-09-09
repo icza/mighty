@@ -50,7 +50,7 @@ Using `mighty`:
 
 Without `mighty` it could look like this:
 
-	r := bytes.NewBufferString("test-data") // Acquire the Buffer
+	r := bytes.NewBufferString("test-data")
 	if b, err := r.ReadByte(); b != 't' || err != nil {
 		t.Errorf("Expected: %v, got: %v, error: %v", 't', b, err)
 	}
@@ -66,7 +66,7 @@ Without `mighty` it could look like this:
 Using `mighty`:
 
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
-	r := bytes.NewBufferString("test-data") // Acquire the Buffer
+	r := bytes.NewBufferString("test-data")
 	expEq(byte('t'))(r.ReadByte())
 	expEq("est-")(r.ReadString('-'))
 	p := make([]byte, 4)
