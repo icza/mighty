@@ -1,14 +1,14 @@
-# mighty
+/*
 
-Package `mighty` is a lightweight extension to Go's [testing](https://golang.org/pkg/testing/) package.
+Package mighty is a lightweight extension to Go's testing package.
 
 With this utility, you can make your Go test files super clean but still intuitive.
 This package doesn't want to hide complex things from you, but wants to eliminate repetitive,
 long code from your tests.
 
-## Using `mighty`
+Using mighty
 
-You could create a value of `mighty.Myt` and use its methods like `m.Eq()`, `m.Neq()`, ... etc. as seen below:
+You could create a value of mighty.Myt and use its methods like m.Eq(), m.Neq(), ... etc. as seen below:
 
 	m := mighty.Myt{t}
 	// Expect len("mighty") to be 6
@@ -16,7 +16,7 @@ You could create a value of `mighty.Myt` and use its methods like `m.Eq()`, `m.N
 	// Expect the read byte to be 'a' AND returned error to be nil
 	m.ExpEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
 
-But the recommended way is to acquire [method values](https://golang.org/ref/spec#Method_values) returned by functions of `mighty`:
+But the recommended way is to acquire method values returned by functions of mighty:
 
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
 	// Expect len("mighty") to be 6
@@ -24,9 +24,9 @@ But the recommended way is to acquire [method values](https://golang.org/ref/spe
 	// Expect the read byte to be 'a' AND returned error to be nil
 	expEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
 
-### Example #1: testing `math.Abs()`
+Example #1: testing math.Abs()
 
-Without `mighty` it could look like this:
+Without mighty it could look like this:
 
 	cases := []struct{ in, exp float64 }{{1, 1}, {-1, 1}}
 	for _, c := range cases {
@@ -35,7 +35,7 @@ Without `mighty` it could look like this:
 		}
 	}
 
-Using `mighty`:
+Using mighty:
 
 	cases := []struct{ in, exp float64 }{{1, 1}, {-1, 1}}
 	eq := mighty.Eq(t)
@@ -43,9 +43,9 @@ Using `mighty`:
 		eq(c.exp, math.Abs(c.in))
 	}
 
-### Example #2: testing reading from `bytes.Buffer`
+Example #2: testing reading from bytes.Buffer
 
-Without `mighty` it could look like this:
+Without mighty it could look like this:
 
 	r := bytes.NewBufferString("test-data") // Acquire the Buffer
 	if b, err := r.ReadByte(); b != 't' || err != nil {
@@ -59,7 +59,7 @@ Without `mighty` it could look like this:
 		t.Errorf("Expected: n=%v, p=%v; got: n=%v, p=%v; error: %v", 4, "data", n, string(p), err)
 	}
 
-Using `mighty`:
+Using mighty:
 
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
 	r := bytes.NewBufferString("test-data") // Acquire the reader
@@ -68,3 +68,6 @@ Using `mighty`:
 	p := make([]byte, 4)
 	expEq(4)(r.Read(p))
 	eq("data", string(p))
+
+ */
+package mighty

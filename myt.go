@@ -26,10 +26,12 @@ func (m Myt) Neq(v1, v2 interface{}, errs ...error) {
 
 // ExpEq takes the expected value and returns a function which
 // only takes the 'got' value and an optional error.
+//
 // The following multiline code:
 //     exp := some_expected_value
 //     got, err := SomeFunc()
 //     Eq(exp, got, err)
+//
 // Is equivalent to this single line:
 //     ExpEq(exp)(SoomeFunc())
 func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
@@ -51,10 +53,12 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 
 // ExpNeq takes one value and returns a function which
 // takes only the 2nd value and an optional error.
+//
 // The following multiline code:
 //     v1 := some_value1
 //     v2, err := SomeFunc()
 //     Neq(v1, v2, err)
+//
 // Is equivalent to this single line:
 //     ExpNeq(v1)(SoomeFunc())
 func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
