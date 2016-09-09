@@ -18,7 +18,8 @@ You could create a value of `mighty.Myt` and use its methods like `m.Eq()`, `m.N
 	// Expect the read byte to be 'a' AND returned error to be nil
 	m.ExpEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
 
-But the recommended way is to acquire [method values](https://golang.org/ref/spec#Method_values) returned by functions of `mighty`:
+But the recommended, more intuitive and more compact way is to acquire and use [method values](https://golang.org/ref/spec#Method_values)
+returned by functions of `mighty`:
 
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
 	// Expect len("mighty") to be 6
@@ -65,7 +66,7 @@ Without `mighty` it could look like this:
 Using `mighty`:
 
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
-	r := bytes.NewBufferString("test-data") // Acquire the reader
+	r := bytes.NewBufferString("test-data") // Acquire the Buffer
 	expEq(byte('t'))(r.ReadByte())
 	expEq("est-")(r.ReadString('-'))
 	p := make([]byte, 4)
