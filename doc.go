@@ -24,7 +24,7 @@ But the recommended way is to acquire method values returned by functions of mig
 	// Expect the read byte to be 'a' AND returned error to be nil
 	expEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
 
-Example 1 Testing math.Abs()
+Example 1 testing math Abs
 
 Without mighty it could look like this:
 
@@ -43,7 +43,7 @@ Using mighty:
 		eq(c.exp, math.Abs(c.in))
 	}
 
-Example 2 Testing reading from bytes.Buffer
+Example 2 testing reading from bytes Buffer
 
 Without mighty it could look like this:
 
