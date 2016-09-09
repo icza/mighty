@@ -76,13 +76,15 @@ func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 
 // getFileLine reports the file name and line number of the first caller
 // that is not from this package.
-func getFileLine() (string, int) {
+func getFileLine() (file string, line int) {
 	callers := make([]uintptr, 20)
 	count := runtime.Callers(1, callers)
 	for i := 0; i < count; i++ {
 		pc := callers[i]
 		if fd := runtime.FuncForPC(pc); !strings.HasPrefix(fd.Name(), packageName) {
-			return fd.FileLine(pc)
+			file, line = fd.FileLine(pc)
+			line-- // TODO: line is actual line +1, WHY??
+			return
 		}
 	}
 	return "<unknown_file>", -1
