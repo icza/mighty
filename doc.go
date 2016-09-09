@@ -10,20 +10,18 @@ Using mighty
 
 You could create a value of mighty.Myt and use its methods like m.Eq(), m.Neq(), ... etc. as seen below:
 
-	m := mighty.Myt{t}
-	// Expect len("mighty") to be 6
-	m.Eq(6, len("mighty"))
-	// Expect the read byte to be 'a' AND returned error to be nil
-	m.ExpEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
+	m := mighty.Myt{t} // t is of type *testing.T
+	m.Eq(6, len("mighty")) // Expect len("mighty") to be 6
+	r := bytes.NewBuffer([]byte{'a'})
+	m.ExpEq(byte('a'))(r.ReadByte()) // Expect the read byte to be 'a' AND returned error to be nil
 
 But the recommended, more intuitive and more compact way is to acquire and use method values
 returned by functions of mighty:
 
-	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
-	// Expect len("mighty") to be 6
-	eq(6, len("mighty"))
-	// Expect the read byte to be 'a' AND returned error to be nil
-	expEq(byte('a'))(bytes.NewBuffer([]byte{'a'}).ReadByte())
+	eq, expEq := mighty.Eq(t), mighty.ExpEq(t) // t is of type *testing.T
+	eq(6, len("mighty")) // Expect len("mighty") to be 6
+	r := bytes.NewBuffer([]byte{'a'})
+	expEq(byte('a'))(r.ReadByte()) // Expect the read byte to be 'a' AND returned error to be nil
 
 Example 1 testing math Abs
 
@@ -70,6 +68,13 @@ Using mighty:
 	p := make([]byte, 4)
 	expEq(4)(r.Read(p))
 	eq("data", string(p))
+
+More examples
+
+Fore more usage examples, check out the following packages which use mighty extensively in their testing code:
+
+- https://github.com/icza/bitio
+- https://github.com/icza/session
 
 */
 package mighty
