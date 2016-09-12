@@ -71,9 +71,10 @@ Using mighty:
 
 More examples
 
-Fore more usage examples, check out the following packages which use mighty extensively in their testing code:
+For more usage examples, check out the following packages which use mighty extensively in their testing code:
 
 - https://github.com/icza/bitio
+
 - https://github.com/icza/session
 
 */

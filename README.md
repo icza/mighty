@@ -73,7 +73,7 @@ Using `mighty`:
 
 ### More examples
 
-Fore more usage examples, check out the following packages which use `mighty` extensively in their testing code:
+For more usage examples, check out the following packages which use `mighty` extensively in their testing code:
 
 - [github.com/icza/bitio](https://github.com/icza/bitio)
 - [github.com/icza/session](https://github.com/icza/session)
