@@ -64,3 +64,17 @@ func TestFuncs(t *testing.T) {
 	eq(1, 2)
 	expEq(1)(2, nil)
 }
+
+func TestGetFileLineUnknown(t *testing.T) {
+	// We need a "deep" stack
+	var f func(int)
+
+	f = func(n int) {
+		if n < 25 {
+			f(n + 1)
+		} else {
+			Myt{&TBMock{}}.Eq(1, 2)
+		}
+	}
+	f(0)
+}
