@@ -9,9 +9,10 @@ import (
 
 var packageName = reflect.TypeOf(Myt{}).PkgPath() // e.g. "github.com/icza/mighty"
 
-// Myt is a wrapper around *testing.T, arming it with short utility methods.
+// Myt is a wrapper around a testing.TB value which is usually
+// a *testing.T or a *testing.B, arming it with short utility methods.
 type Myt struct {
-	*testing.T
+	testing.TB
 }
 
 // Eq reports an error if exp != got, or an optional non-nil error is provided.
@@ -43,16 +44,16 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 		if exp != got || err != nil {
 			file, line := getFileLine()
 			if err == nil {
-				m.T.Errorf("[%s:%d] Expected: %v, got: %v", file, line, exp, got)
+				m.Errorf("[%s:%d] Expected: %v, got: %v", file, line, exp, got)
 			} else {
-				m.T.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", file, line, exp, got, err)
+				m.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", file, line, exp, got, err)
 			}
 			// Common mistake is to provide constants as exp whose default value will be applied
 			// when packed into interface{} which might not be the case in case of direct comparison.
 			// Provide warning for such likely cause.
 			if exp != got && exp != nil && got != nil {
 				if texp, tgot := reflect.TypeOf(exp), reflect.TypeOf(got); texp != tgot {
-					m.T.Errorf("\tType of expected and got does not match! exp type: %v, got type: %v", texp, tgot)
+					m.Errorf("\tType of expected and got does not match! exp type: %v, got type: %v", texp, tgot)
 				}
 			}
 		}
@@ -78,9 +79,9 @@ func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 		if v1 == v2 || err != nil {
 			file, line := getFileLine()
 			if err == nil {
-				m.T.Errorf("[%s:%d] Expected mismatch: %v, got: %v", file, line, v1, v2)
+				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v", file, line, v1, v2)
 			} else {
-				m.T.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", file, line, v1, v2, err)
+				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", file, line, v1, v2, err)
 			}
 		}
 	}
@@ -102,28 +103,41 @@ func getFileLine() (file string, line int) {
 	return "<unknown_file>", -1
 }
 
+// Func2ArgsErr is a type describing a function which takes 2 interface{} arguments
+// and an optional error (in the form of a variadic parameter).
+type Func2ArgsErr func(interface{}, interface{}, ...error)
+
+// Func1ArgFunc1ArgErr is a type describing a function which takes 1 interface{} argument
+// and returns a function which takes 1 interface{} argument and an optional error (in the form of a variadic parameter).
+type Func1ArgFunc1ArgErr func(interface{}) func(interface{}, ...error)
+
 // Eq returns a method value of Myt{t}.Eq.
-func Eq(t *testing.T) func(interface{}, interface{}, ...error) {
-	return Myt{t}.Eq
+// tb may be a *testing.T or *testing.B value.
+func Eq(tb testing.TB) Func2ArgsErr {
+	return Myt{tb}.Eq
 }
 
 // Neq returns a method value of Myt{t}.Neq.
-func Neq(t *testing.T) func(interface{}, interface{}, ...error) {
-	return Myt{t}.Neq
+// tb may be a *testing.T or *testing.B value.
+func Neq(tb testing.TB) Func2ArgsErr {
+	return Myt{tb}.Neq
 }
 
 // EqNeq returns 2 method values: Myt{t}.Eq and Myt{t}.Neq.
-func EqNeq(t *testing.T) (func(interface{}, interface{}, ...error), func(interface{}, interface{}, ...error)) {
-	myt := Myt{t}
+// tb may be a *testing.T or *testing.B value.
+func EqNeq(tb testing.TB) (Func2ArgsErr, Func2ArgsErr) {
+	myt := Myt{tb}
 	return myt.Eq, myt.Neq
 }
 
 // ExpEq returns a method value of Myt{t}.ExpEq.
-func ExpEq(t *testing.T) func(interface{}) func(interface{}, ...error) {
-	return Myt{t}.ExpEq
+// tb may be a *testing.T or *testing.B value.
+func ExpEq(tb testing.TB) Func1ArgFunc1ArgErr {
+	return Myt{tb}.ExpEq
 }
 
 // ExpNeq returns a method value of Myt{t}.ExpNeq.
-func ExpNeq(t *testing.T) func(interface{}) func(interface{}, ...error) {
-	return Myt{t}.ExpNeq
+// tb may be a *testing.T or *testing.B value.
+func ExpNeq(tb testing.TB) Func1ArgFunc1ArgErr {
+	return Myt{tb}.ExpNeq
 }

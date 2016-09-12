@@ -15,7 +15,7 @@ You could create a value of `mighty.Myt` and use its methods like `m.Eq()`, `m.N
 	m := mighty.Myt{t} // t is of type *testing.T
 	m.Eq(6, len("mighty")) // Expect len("mighty") to be 6
 	r := bytes.NewBuffer([]byte{'a'})
-	m.ExpEq(byte('a'))(r.ReadByte()) // Expect the read byte to be 'a' AND returned error to be nil
+	m.ExpEq(byte('a'))(r.ReadByte()) // Expect to read 'a' and no error
 
 But the recommended, more intuitive and more compact way is to acquire and use [method values](https://golang.org/ref/spec#Method_values)
 returned by functions of `mighty`:
@@ -23,7 +23,7 @@ returned by functions of `mighty`:
 	eq, expEq := mighty.Eq(t), mighty.ExpEq(t) // t is of type *testing.T
 	eq(6, len("mighty")) // Expect len("mighty") to be 6
 	r := bytes.NewBuffer([]byte{'a'})
-	expEq(byte('a'))(r.ReadByte()) // Expect the read byte to be 'a' AND returned error to be nil
+	expEq(byte('a'))(r.ReadByte()) // Expect to read 'a' and no error
 
 ### Example #1: testing `math.Abs()`
 
