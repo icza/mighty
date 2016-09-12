@@ -18,7 +18,7 @@ You could create a value of mighty.Myt and use its methods like m.Eq(), m.Neq(),
 But the recommended, more intuitive and more compact way is to acquire and use method values
 returned by functions of mighty:
 
-	eq, expEq := mighty.Eq(t), mighty.ExpEq(t) // t is of type *testing.T
+	eq, expEq := mighty.EqExpEq(t) // t is of type *testing.T
 	eq(6, len("mighty")) // Expect len("mighty") to be 6
 	r := bytes.NewBuffer([]byte{'a'})
 	expEq(byte('a'))(r.ReadByte()) // Expect to read 'a' and no error
@@ -61,7 +61,7 @@ Without mighty it could look like this:
 
 Using mighty:
 
-	eq, expEq := mighty.Eq(t), mighty.ExpEq(t)
+	eq, expEq := mighty.EqExpEq(t)
 	r := bytes.NewBufferString("test-data")
 	expEq(byte('t'))(r.ReadByte())
 	expEq("est-")(r.ReadString('-'))

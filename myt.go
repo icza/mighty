@@ -141,3 +141,10 @@ func ExpEq(tb testing.TB) Func1ArgFunc1ArgErr {
 func ExpNeq(tb testing.TB) Func1ArgFunc1ArgErr {
 	return Myt{tb}.ExpNeq
 }
+
+// EqExpEq returns 2 method values: Myt{t}.Eq and Myt{t}.ExpEq.
+// tb may be a *testing.T or *testing.B value.
+func EqExpEq(tb testing.TB) (Func2ArgsErr, Func1ArgFunc1ArgErr) {
+	myt := Myt{tb}
+	return myt.Eq, myt.ExpEq
+}
