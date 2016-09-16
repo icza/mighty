@@ -42,11 +42,11 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 			err = errs[0]
 		}
 		if exp != got || err != nil {
-			file, line := getFileLine()
+			function, line := getFuncLine()
 			if err == nil {
-				m.Errorf("[%s:%d] Expected: %v, got: %v", file, line, exp, got)
+				m.Errorf("[%s:%d] Expected: %v, got: %v", function, line, exp, got)
 			} else {
-				m.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", file, line, exp, got, err)
+				m.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", function, line, exp, got, err)
 			}
 			// Common mistake is to provide constants as exp whose default value will be applied
 			// when packed into interface{} which might not be the case in case of direct comparison.
@@ -77,29 +77,28 @@ func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 			err = errs[0]
 		}
 		if v1 == v2 || err != nil {
-			file, line := getFileLine()
+			function, line := getFuncLine()
 			if err == nil {
-				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v", file, line, v1, v2)
+				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v", function, line, v1, v2)
 			} else {
-				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", file, line, v1, v2, err)
+				m.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", function, line, v1, v2, err)
 			}
 		}
 	}
 }
 
-// getFileLine reports the file name and line number of the first caller
+// getFuncLine reports the function name and line number of the first caller
 // that is not from this package.
-func getFileLine() (file string, line int) {
+func getFuncLine() (function string, line int) {
 	callers := make([]uintptr, 20)
 	count := runtime.Callers(1, callers)
-	for i := 0; i < count; i++ {
-		pc := callers[i]
-		if fd := runtime.FuncForPC(pc); !strings.HasPrefix(fd.Name(), packageName) {
-			file, line = fd.FileLine(pc)
-			line-- // TODO: line is actual line +1, WHY??
-			return
+	frames := runtime.CallersFrames(callers[:count])
+	for frame, more := frames.Next(); more; frame, more = frames.Next() {
+		if !strings.HasPrefix(frame.Function, packageName) {
+			return frame.Function, frame.Line
 		}
 	}
+
 	return "<unknown_file>", -1
 }
 
