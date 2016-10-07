@@ -118,7 +118,7 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 // NearLogic checks if 2 float64 numbers are "near" to each other.
 // The caller is responsible to provide a sensible epsilon.
 // "near" is defined as the following:
-//     near := Math.Abs(a, b) < eps
+//     near := Math.Abs(a - b) < eps
 //
 // Corner cases:
 //  1. if a==b, result is true (eps will not be checked, may be NaN)
