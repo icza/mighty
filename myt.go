@@ -27,7 +27,7 @@ func (m Myt) Neq(v1, v2 interface{}, errs ...error) {
 
 // Near reports an error if the float64 exp is not "near" to got,
 // or an optional non-nil error is provided.
-// "near" is defined by the NearLogic() function.
+// "near" is defined by the NearLogic function variable.
 func (m Myt) Near(exp, got, eps float64, errs ...error) {
 	m.ExpNear(exp, eps)(got, errs...)
 }
@@ -37,10 +37,10 @@ func (m Myt) Near(exp, got, eps float64, errs ...error) {
 //
 // The following multiline code:
 //     got, err := SomeFunc()
-//     Eq(someExpectedValue, got, err)
+//     Eq(exp, got, err)
 //
 // Is equivalent to this single line:
-//     ExpEq(someExpectedValue)(SomeFunc())
+//     ExpEq(exp)(SomeFunc())
 func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 	return func(got interface{}, errs ...error) {
 		err := getErr(errs...)
@@ -70,10 +70,10 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 //
 // The following multiline code:
 //     v2, err := SomeFunc()
-//     Neq(someValue1, v2, err)
+//     Neq(v1, v2, err)
 //
 // Is equivalent to this single line:
-//     ExpNeq(someValue1)(SomeFunc())
+//     ExpNeq(v1)(SomeFunc())
 func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 	return func(v2 interface{}, errs ...error) {
 		err := getErr(errs...)
@@ -90,15 +90,15 @@ func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 	}
 }
 
-// ExpNear takes the expected and epslion values and returns a function which
+// ExpNear takes the expected and epsilon values and returns a function which
 // only takes the 'got' value and an optional error.
 //
 // The following multiline code:
 //     got, err := SomeFunc()
-//     Near(someExpectedValue, got, someEpsilon, err)
+//     Near(exp, got, eps, err)
 //
 // Is equivalent to this single line:
-//     ExpNear(someExpectedValue, someEpsilon)(SomeFunc())
+//     ExpNear(exp, eps)(SomeFunc())
 func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 	return func(got float64, errs ...error) {
 		err := getErr(errs...)
@@ -115,8 +115,15 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 	}
 }
 
-// NearLogic checks if 2 float64 numbers are "near" to each other.
+// NearLogic is the function deciding if 2 float64 numbers are near to each other,
+// it is used by the Myt.Near() and Myt.ExpNear() functions.
+// Default value is NearFunc, but you may set your own function.
+var NearLogic func(a, b, eps float64) bool = NearFunc
+
+// NearFunc checks if 2 float64 numbers are "near" to each other.
 // The caller is responsible to provide a sensible epsilon.
+// This is the default NearLogic, but you may set your own function.
+//
 // "near" is defined as the following:
 //     near := Math.Abs(a - b) < eps
 //
@@ -126,7 +133,7 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 //  3. -Inf is near to -Inf (even if eps=NaN; consequence of 1.)
 //  4. NaN is not near to anything (not even to NaN)
 //  5. eps=Inf results in true (unless any of a or b is NaN)
-func NearLogic(a, b, eps float64) bool {
+func NearFunc(a, b, eps float64) bool {
 	// Quick check, also handles infinities:
 	if a == b {
 		return true
