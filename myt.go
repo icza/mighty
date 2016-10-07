@@ -115,8 +115,9 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 	}
 }
 
-// NearLogic is the function deciding if 2 float64 numbers are near to each other,
-// it is used by the Myt.Near() and Myt.ExpNear() functions.
+// NearLogic is a variable holding a function which is responsible to
+// decide if 2 float64 numbers are near to each other (given an epsilon).
+// It is used by the Myt.Near() and Myt.ExpNear() functions.
 // Default value is NearFunc, but you may set your own function.
 var NearLogic func(a, b, eps float64) bool = NearFunc
 
