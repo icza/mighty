@@ -34,7 +34,7 @@ func (m Myt) Neq(v1, v2 interface{}, errs ...error) {
 //     Eq(exp, got, err)
 //
 // Is equivalent to this single line:
-//     ExpEq(exp)(SoomeFunc())
+//     ExpEq(exp)(SomeFunc())
 func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 	return func(got interface{}, errs ...error) {
 		var err error
@@ -69,7 +69,7 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 //     Neq(v1, v2, err)
 //
 // Is equivalent to this single line:
-//     ExpNeq(v1)(SoomeFunc())
+//     ExpNeq(v1)(SomeFunc())
 func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 	return func(v2 interface{}, errs ...error) {
 		var err error
