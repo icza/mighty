@@ -1,6 +1,7 @@
 package mighty
 
 import (
+	"math"
 	"reflect"
 	"runtime"
 	"strings"
@@ -140,12 +141,7 @@ func NearFunc(a, b, eps float64) bool {
 		return true
 	}
 
-	diff := a - b
-	if diff < 0 {
-		diff = -diff
-	}
-
-	return diff < eps
+	return math.Abs(a-b) < eps
 }
 
 // getErr is a utility function which returns the optional error
