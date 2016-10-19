@@ -21,6 +21,12 @@ func (m Myt) Eq(exp, got interface{}, errs ...error) {
 	m.ExpEq(exp)(got, errs...)
 }
 
+// Deq reports an error if !reflect.DeepEqual(exp, got), or an optional
+// non-nil error is provided.
+func (m Myt) Deq(exp, got interface{}, errs ...error) {
+	m.ExpDeq(exp)(got, errs...)
+}
+
 // Neq reports an error if exp == got, or an optional non-nil error is provided.
 func (m Myt) Neq(v1, v2 interface{}, errs ...error) {
 	m.ExpNeq(v1)(v2, errs...)
@@ -43,9 +49,35 @@ func (m Myt) Near(exp, got, eps float64, errs ...error) {
 // Is equivalent to this single line:
 //     ExpEq(exp)(SomeFunc())
 func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
+	return m.expEqDeq(exp, false)
+}
+
+// ExpDeq takes the expected value and returns a function which
+// only takes the 'got' value and an optional error.
+//
+// The following multiline code:
+//     got, err := SomeFunc()
+//     Deq(exp, got, err)
+//
+// Is equivalent to this single line:
+//     ExpDeq(exp)(SomeFunc())
+func (m Myt) ExpDeq(exp interface{}) func(got interface{}, errs ...error) {
+	return m.expEqDeq(exp, true)
+}
+
+// expEqDeq takes the expected value and returns a function which
+// only takes the 'got' value and an optional error.
+// Whether deep equality has to be used is controled by the deep argument.
+func (m Myt) expEqDeq(exp interface{}, deep bool) func(got interface{}, errs ...error) {
 	return func(got interface{}, errs ...error) {
 		err := getErr(errs...)
-		if exp == got && err == nil {
+		var eq bool
+		if deep {
+			eq = reflect.DeepEqual(exp, got)
+		} else {
+			eq = exp == got
+		}
+		if eq && err == nil {
 			return
 		}
 
@@ -58,7 +90,7 @@ func (m Myt) ExpEq(exp interface{}) func(got interface{}, errs ...error) {
 		// Common mistake is to provide constants as exp whose default value will be applied
 		// when packed into interface{} which might not be the case in case of direct comparison.
 		// Provide warning for such likely cause.
-		if exp != got && exp != nil && got != nil {
+		if !eq && exp != nil && got != nil {
 			if texp, tgot := reflect.TypeOf(exp), reflect.TypeOf(got); texp != tgot {
 				m.Errorf("\tType of expected and got does not match! exp type: %v, got type: %v", texp, tgot)
 			}
@@ -190,6 +222,12 @@ func Eq(tb testing.TB) Func2ArgsErr {
 	return Myt{tb}.Eq
 }
 
+// Deq returns a method value of Myt{tb}.Deq.
+// tb may be a *testing.T or *testing.B value.
+func Deq(tb testing.TB) Func2ArgsErr {
+	return Myt{tb}.Deq
+}
+
 // Neq returns a method value of Myt{tb}.Neq.
 // tb may be a *testing.T or *testing.B value.
 func Neq(tb testing.TB) Func2ArgsErr {
@@ -213,6 +251,12 @@ func EqNeq(tb testing.TB) (Func2ArgsErr, Func2ArgsErr) {
 // tb may be a *testing.T or *testing.B value.
 func ExpEq(tb testing.TB) Func1ArgFunc1ArgErr {
 	return Myt{tb}.ExpEq
+}
+
+// ExpDeq returns a method value of Myt{tb}.ExpDeq.
+// tb may be a *testing.T or *testing.B value.
+func ExpDeq(tb testing.TB) Func1ArgFunc1ArgErr {
+	return Myt{tb}.ExpDeq
 }
 
 // ExpNeq returns a method value of Myt{tb}.ExpNeq.

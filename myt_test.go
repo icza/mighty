@@ -16,22 +16,22 @@ func (m *TBMock) Errorf(format string, args ...interface{}) {
 	m.errCalls++
 }
 
-func TestMytEqNeq(t *testing.T) {
+func TestMytDeqEqNeq(t *testing.T) {
 	tb := &TBMock{}
 	myt := Myt{tb}
 
 	errs := []error{errors.New("test error")}
 	cases := []struct {
-		exp, got                interface{}
-		errs                    []error
-		eqErrCalls, neqErrCalls int
+		exp, got                             interface{}
+		errs                                 []error
+		eqErrCalls, deqErrCalls, neqErrCalls int
 	}{
-		{1, 1, nil, 0, 1},
-		{1, 2, nil, 1, 0},
-		{1, "3", nil, 2, 0},
-		{1, 1, errs, 1, 1},
-		{1, 2, errs, 1, 1},
-		{1, "3", errs, 2, 1},
+		{1, 1, nil, 0, 0, 1},
+		{1, 2, nil, 1, 1, 0},
+		{1, "3", nil, 2, 2, 0},
+		{1, 1, errs, 1, 1, 1},
+		{1, 2, errs, 1, 1, 1},
+		{1, "3", errs, 2, 2, 1},
 	}
 
 	for i, c := range cases {
@@ -44,6 +44,38 @@ func TestMytEqNeq(t *testing.T) {
 		myt.Neq(c.exp, c.got, c.errs...)
 		if c.neqErrCalls != tb.errCalls {
 			t.Errorf("[i=%d] Expected: %d, got: %d", i, c.neqErrCalls, tb.errCalls)
+		}
+		tb.errCalls = 0
+		myt.Deq(c.exp, c.got, c.errs...)
+		if c.deqErrCalls != tb.errCalls {
+			t.Errorf("[i=%d] Expected: %d, got: %d", i, c.deqErrCalls, tb.errCalls)
+		}
+	}
+}
+
+func TestMytDeq(t *testing.T) {
+	tb := &TBMock{}
+	myt := Myt{tb}
+
+	errs := []error{errors.New("test error")}
+	cases := []struct {
+		exp, got interface{}
+		errs     []error
+		errCalls int
+	}{
+		{[]int{1, 2}, []int{1, 2}, nil, 0},
+		{[]int{1, 2}, []int{2, 2}, nil, 1},
+		{[]int{1, 2}, "x", nil, 2},
+		{[]int{1, 2}, []int{1, 2}, errs, 1},
+		{[]int{1, 2}, []int{2, 2}, errs, 1},
+		{[]int{1, 2}, "x", errs, 2},
+	}
+
+	for i, c := range cases {
+		tb.errCalls = 0
+		myt.Deq(c.exp, c.got, c.errs...)
+		if c.errCalls != tb.errCalls {
+			t.Errorf("[i=%d] Expected: %d, got: %d", i, c.errCalls, tb.errCalls)
 		}
 	}
 }
@@ -85,6 +117,7 @@ func TestFuncs(t *testing.T) {
 	tb := &TBMock{}
 
 	Eq(tb)(1, 2)
+	Deq(tb)(1, 2)
 	Neq(tb)(1, 2)
 	Near(tb)(1, 1, 1e-6)
 
@@ -93,6 +126,7 @@ func TestFuncs(t *testing.T) {
 	neq(1, 2)
 
 	ExpEq(tb)(1)(2, nil)
+	ExpDeq(tb)(1)(2, nil)
 	ExpNeq(tb)(1)(2, nil)
 	ExpNear(tb)(1, 1e-6)(1, nil)
 
