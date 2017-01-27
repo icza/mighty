@@ -92,7 +92,7 @@ func (m Myt) expEqDeq(exp interface{}, deep bool) func(got interface{}, errs ...
 		// Provide warning for such likely cause.
 		if !eq && exp != nil && got != nil {
 			if texp, tgot := reflect.TypeOf(exp), reflect.TypeOf(got); texp != tgot {
-				m.Errorf("\tType of expected and got does not match! exp type: %v, got type: %v", texp, tgot)
+				m.Errorf("\tTypes of expected and got do not match! exp type: %v, got type: %v", texp, tgot)
 			}
 		}
 	}
@@ -152,7 +152,7 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 // decide if 2 float64 numbers are near to each other (given an epsilon).
 // It is used by the Myt.Near() and Myt.ExpNear() functions.
 // Default value is NearFunc, but you may set your own function.
-var NearLogic func(a, b, eps float64) bool = NearFunc
+var NearLogic = NearFunc
 
 // NearFunc checks if 2 float64 numbers are "near" to each other.
 // The caller is responsible to provide a sensible epsilon.
