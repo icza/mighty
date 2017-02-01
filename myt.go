@@ -193,7 +193,7 @@ func getFuncLine() (function string, line int) {
 	frames := runtime.CallersFrames(callers[:count])
 	for frame, more := frames.Next(); more; frame, more = frames.Next() {
 		if !strings.HasPrefix(frame.Function, packageName) {
-			return frame.Function, frame.Line
+			return frame.File + ":" + frame.Function, frame.Line
 		}
 	}
 
