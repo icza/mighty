@@ -1,7 +1,9 @@
 package mighty
 
 import (
+	"fmt"
 	"math"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
@@ -81,11 +83,10 @@ func (m Myt) expEqDeq(exp interface{}, deep bool) func(got interface{}, errs ...
 			return
 		}
 
-		function, line := getFuncLine()
 		if err == nil {
-			m.Errorf("[%s:%d] Expected: %v, got: %v", function, line, exp, got)
+			m.Errorf("%s\n\tExpected: %v, got: %v", getFuncLine(), exp, got)
 		} else {
-			m.Errorf("[%s:%d] Expected: %v, got: %v, error: %v", function, line, exp, got, err)
+			m.Errorf("%s\n\tExpected: %v, got: %v, error: %v", getFuncLine(), exp, got, err)
 		}
 		// Common mistake is to provide constants as exp whose default value will be applied
 		// when packed into interface{} which might not be the case in case of direct comparison.
@@ -114,11 +115,10 @@ func (m Myt) ExpNeq(v1 interface{}) func(v2 interface{}, errs ...error) {
 			return
 		}
 
-		function, line := getFuncLine()
 		if err == nil {
-			m.Errorf("[%s:%d] Expected mismatch: %v, got: %v", function, line, v1, v2)
+			m.Errorf("%s\n\tExpected mismatch: %v, got: %v", getFuncLine(), v1, v2)
 		} else {
-			m.Errorf("[%s:%d] Expected mismatch: %v, got: %v, error: %v", function, line, v1, v2, err)
+			m.Errorf("%s\n\tExpected mismatch: %v, got: %v, error: %v", getFuncLine(), v1, v2, err)
 		}
 	}
 }
@@ -139,11 +139,11 @@ func (m Myt) ExpNear(exp, eps float64) func(got float64, errs ...error) {
 			return
 		}
 
-		function, line := getFuncLine()
 		if err == nil {
-			m.Errorf("[%s:%d] Expected: %v, got: %v, with eps: %v)", function, line, exp, got, eps)
+			m.Errorf("%s\n\tExpected: %v, got: %v, with eps: %v)",
+				getFuncLine(), exp, got, eps)
 		} else {
-			m.Errorf("[%s:%d] Expected: %v, got: %v, with eps: %v, error: %v", function, line, exp, got, eps, err)
+			m.Errorf("%s\n\tExpected: %v, got: %v, with eps: %v, error: %v", getFuncLine(), exp, got, eps, err)
 		}
 	}
 }
@@ -185,19 +185,27 @@ func getErr(errs ...error) error {
 	return nil
 }
 
-// getFuncLine reports the function name and line number of the first caller
-// that is not from this package.
-func getFuncLine() (function string, line int) {
+// getFuncLine returns a formatted string containing the function name,
+// file name and line number of the first caller that is not from this package.
+func getFuncLine() string {
+	var function, file string
+	var line int
+
 	callers := make([]uintptr, 20)
 	count := runtime.Callers(1, callers)
 	frames := runtime.CallersFrames(callers[:count])
 	for frame, more := frames.Next(); more; frame, more = frames.Next() {
 		if !strings.HasPrefix(frame.Function, packageName) {
-			return frame.File + ":" + frame.Function, frame.Line
+			function, file, line = frame.Function, filepath.Base(frame.File), frame.Line
+			break
 		}
 	}
 
-	return "<unknown_file>", -1
+	if function == "" {
+		function, file, line = "<unknown_func>", "<unknown_file>", -1
+	}
+
+	return fmt.Sprintf("Func: %s, File: %s:%d", function, file, line)
 }
 
 // Func2ArgsErr is a type describing a function which takes 2 interface{} arguments
