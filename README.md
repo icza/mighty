@@ -80,3 +80,4 @@ For more usage examples, check out the following packages which use `mighty` ext
 
 - [github.com/icza/bitio](https://github.com/icza/bitio)
 - [github.com/icza/session](https://github.com/icza/session)
+- [github.com/icza/kvcache](https://github.com/icza/kvcache)

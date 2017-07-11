@@ -77,5 +77,7 @@ For more usage examples, check out the following packages which use mighty exten
 
 - https://github.com/icza/session
 
+- https://github.com/icza/kvcache
+
 */
 package mighty
