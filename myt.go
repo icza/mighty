@@ -74,8 +74,12 @@ func (m Myt) expEqDeq(exp interface{}, deep bool) func(got interface{}, errs ...
 	return func(got interface{}, errs ...error) {
 		err := getErr(errs...)
 		var eq bool
+		var separator string
 		if deep {
 			eq = reflect.DeepEqual(exp, got)
+			// When checking deep equality, values may be "big" (complex),
+			// so align 'got' under 'Expected' for easy visual comparibility.
+			separator = "\n\t    "
 		} else {
 			eq = exp == got
 		}
@@ -84,9 +88,9 @@ func (m Myt) expEqDeq(exp interface{}, deep bool) func(got interface{}, errs ...
 		}
 
 		if err == nil {
-			m.Errorf("%s\n\tExpected: %v, got: %v", getFuncLine(), exp, got)
+			m.Errorf("%s\n\tExpected: %v,%s got: %v", getFuncLine(), exp, separator, got)
 		} else {
-			m.Errorf("%s\n\tExpected: %v, got: %v, error: %v", getFuncLine(), exp, got, err)
+			m.Errorf("%s\n\tExpected: %v,%s got: %v, error: %v", getFuncLine(), exp, separator, got, err)
 		}
 		// Common mistake is to provide constants as exp whose default value will be applied
 		// when packed into interface{} which might not be the case in case of direct comparison.
