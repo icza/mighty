@@ -125,6 +125,10 @@ func TestFuncs(t *testing.T) {
 	eq(1, 2)
 	neq(1, 2)
 
+	eq, deq := EqDeq(tb)
+	eq(1, 2)
+	deq(1, 2)
+
 	ExpEq(tb)(1)(2, nil)
 	ExpDeq(tb)(1)(2, nil)
 	ExpNeq(tb)(1)(2, nil)

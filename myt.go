@@ -252,6 +252,13 @@ func Near(tb testing.TB) Func3FloatsErr {
 	return Myt{tb}.Near
 }
 
+// EqDeq returns 2 method values: Myt{tb}.Eq and Myt{tb}.Deq.
+// tb may be a *testing.T or *testing.B value.
+func EqDeq(tb testing.TB) (Func2ArgsErr, Func2ArgsErr) {
+	myt := Myt{tb}
+	return myt.Eq, myt.Deq
+}
+
 // EqNeq returns 2 method values: Myt{tb}.Eq and Myt{tb}.Neq.
 // tb may be a *testing.T or *testing.B value.
 func EqNeq(tb testing.TB) (Func2ArgsErr, Func2ArgsErr) {
