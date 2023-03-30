@@ -1,7 +1,7 @@
 # mighty
 
-[![Build Status](https://travis-ci.org/icza/mighty.svg?branch=master)](https://travis-ci.org/icza/mighty)
-[![GoDoc](https://godoc.org/github.com/icza/mighty?status.svg)](https://godoc.org/github.com/icza/mighty)
+![Build Status](https://github.com/icza/mighty/actions/workflows/go.yml/badge.svg)
+[![Go Reference](https://pkg.go.dev/badge/github.com/icza/mighty.svg)](https://pkg.go.dev/github.com/icza/mighty)
 [![Go Report Card](https://goreportcard.com/badge/github.com/icza/mighty)](https://goreportcard.com/report/github.com/icza/mighty)
 [![codecov](https://codecov.io/gh/icza/mighty/branch/master/graph/badge.svg)](https://codecov.io/gh/icza/mighty)
 
